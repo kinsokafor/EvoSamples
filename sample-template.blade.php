@@ -24,3 +24,6 @@
 {{$links['recoverPassword']}}
 {{$links['registration']}}
 {{$loginLink}}
+
+<p>Assets</p>
+@section('assets', '/Public/Themes/Investment.theme/assets/')
