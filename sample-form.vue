@@ -30,6 +30,29 @@
         {
             label: "Name",
             name: "fullname"
+        },
+        {
+            label: "File uploader",
+            name: "file_uploader",
+            as: "filepond",
+            acceptedFileTypes: ['image/*'],
+            rules: yup.string().required(),
+            allowMultiple: false
+        },
+        {
+            label: "Croppie Uploader",
+            name: "croppie_uploader",
+            as: "croppie",
+            column: "right",
+            "viewport": {
+                width: 200,
+                height: 200
+            },
+            "boundary": {
+                width: 210,
+                height: 210
+            },
+            showZoomer: true
         }
     ])
 
