@@ -55,6 +55,10 @@ export const useSampleStore = defineStore('useSampleStore', {
                         }
                     })
                     if (r.data.length >= this.limit) {
+                        if('id' in params) {
+                            this.offset = 0
+                            return;
+                        }
                         this.offset = this.limit + this.offset
                         this.loadFromServer(params)
                     } else {
@@ -64,7 +68,7 @@ export const useSampleStore = defineStore('useSampleStore', {
                         }
                         this.lastTimeOut = setTimeout(() => {
                             this.fetching = false
-                        }, 180000)
+                        }, 3600000)
                     }
                 }
                 
