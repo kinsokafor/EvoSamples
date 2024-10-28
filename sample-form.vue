@@ -63,7 +63,8 @@
             actions.resetForm()
             alertStore.add("Done")
         }).catch(e => {
-            alertStore.add(e.data, "danger")
+            processing.value = false;
+            alertStore.add(e.response.data, "danger");
         })
     }
 </script>
