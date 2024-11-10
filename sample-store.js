@@ -32,7 +32,7 @@ export const useSampleStore = defineStore('useSampleStore', {
                 if ("id" in params) {
                     // const meta = JSON.parse(r.data.meta)
                     // delete r.data.meta
-                    let i = { ...r.data, ...meta }
+                    let i = r.data//{ ...r.data, ...meta }
                     const index = this.data.findIndex(j => j.id == i.id)
                     if (index == -1) {
                         this.data = [i, ...this.data]
