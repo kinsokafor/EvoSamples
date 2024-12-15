@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { dbTable, storeGetter } from '@/helpers';
+import { dbTable, storeGetter, updateStoreDataSingle, updateStoreData } from '@/helpers';
 import _ from 'lodash';
 
 export const useSampleStore = defineStore('useSampleStore', {
@@ -30,30 +30,9 @@ export const useSampleStore = defineStore('useSampleStore', {
                 ...params
             }).then(r => {
                 if ("id" in params) {
-                    // const meta = JSON.parse(r.data.meta)
-                    // delete r.data.meta
-                    let i = r.data//{ ...r.data, ...meta }
-                    const index = this.data.findIndex(j => j.id == i.id)
-                    if (index == -1) {
-                        this.data = [i, ...this.data]
-                    } else {
-                        if (!_.isEqual(this.data[index], i)) {
-                            this.data[index] = i
-                        }
-                    }
+                    this.data = updateStoreDataSingle(this.data, r.data)
                 } else {
-                    r.data.forEach(i => {
-                        // i = { ...i, ...(JSON.parse(i.meta)) }
-                        // delete i.meta
-                        const index = this.data.findIndex(j => j.id == i.id)
-                        if (index == -1) {
-                            this.data = [i, ...this.data]
-                        } else {
-                            if (!_.isEqual(this.data[index], i)) {
-                                this.data[index] = i
-                            }
-                        }
-                    })
+                    this.data = updateStoreData(this.data, r.data)
                     if (r.data.length >= this.limit) {
                         if('id' in params) {
                             this.offset = 0
