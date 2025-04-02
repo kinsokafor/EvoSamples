@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { dbTable, storeGetter, updateStoreDataSingle, updateStoreData } from '@/helpers';
+import { dbTable, storeGetter, updateStoreDataSingle, updateStoreData, storeLoaderController } from '@/helpers';
 import _ from 'lodash';
 
 export const useSampleStore = defineStore('useSampleStore', {
@@ -39,7 +39,9 @@ export const useSampleStore = defineStore('useSampleStore', {
                             return;
                         }
                         this.offset = this.limit + this.offset
-                        this.loadFromServer(params)
+                        storeLoaderController(this, () => {
+                            this.loadFromServer(params)
+                        })
                     } else {
                         this.offset = 0
                         if(this.lastTimeOut != null) {
