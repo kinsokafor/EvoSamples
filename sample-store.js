@@ -33,7 +33,7 @@ export const useSampleStore = defineStore('useSampleStore', {
                     this.data = updateStoreDataSingle(this.data, r.data)
                 } else {
                     this.data = updateStoreData(this.data, r.data)
-                    if (r.data.length >= this.limit) {
+                    if (r.data.length >= this.limit && params?.limit === undefined) {
                         if('id' in params) {
                             this.offset = 0
                             return;
