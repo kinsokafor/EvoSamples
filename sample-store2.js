@@ -22,7 +22,6 @@ export const useSampleStore = defineStore("useSampleStore", {
       // Start new timeout
       const timeout = setTimeout(() => {
         this.data.delete(key);
-        this.timeOuts.delete(key);
       }, validity);
 
       this.timeOuts.set(key, timeout);
