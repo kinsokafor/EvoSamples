@@ -8,6 +8,7 @@ export const useSampleStore = defineStore("useSampleStore", {
       data: new Map(),
       dbtable: new dbTable(),
       lastTimeOut: null,
+      timeOuts: new Map()
     };
   },
   actions: {
@@ -30,14 +31,20 @@ export const useSampleStore = defineStore("useSampleStore", {
           ...params,
         })
         .then((r) => {
+          if(this.timeOuts.has(key))
+          {
+            clearTimeout(this.timeOuts.get(key))
+          }
           if (Array.isArray(r.data)) {
             const result = r.data.map((i) => parseMeta(i));
             this.data.set(key, result);
-            // setTimeout(() => this.data.delete(key), validity)
+            const timeout = setTimeout(() => this.data.delete(key), validity)
+            this.timeOuts.set(key, timeout)
             return result;
           } else {
             this.data.set(key, r.data);
-            // setTimeout(() => this.data.delete(key), validity)
+            const timeout = setTimeout(() => this.data.delete(key), validity)
+            this.timeOuts.set(key, timeout)
             return r.data;
           }
         });
