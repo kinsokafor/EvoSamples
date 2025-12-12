@@ -4,7 +4,7 @@ import { dbTable, normalize, parseMeta } from "@/helpers";
 export const useSampleStore = defineStore("useSampleStore", {
   state: () => ({
     data: new Map(),
-    dbtable: new dbTable(),
+    anchor: new dbTable(),
     timeOuts: new Map(),
   }),
 
@@ -38,7 +38,7 @@ export const useSampleStore = defineStore("useSampleStore", {
       const offset = page * limit - limit;
       const key = normalize({ ...params, limit, offset, order, order_by });
 
-      const result = await this.dbtable.get("tableName", {
+      const result = await this.anchor.get("tableName", {
         limit,
         offset,
         order,
@@ -59,7 +59,7 @@ export const useSampleStore = defineStore("useSampleStore", {
     },
 
     abort() {
-      this.dbtable.abort();
+      this.anchor.abort();
     },
   },
 
