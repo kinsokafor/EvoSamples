@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
-import { dbTable, normalize, parseMeta } from "@/helpers";
+import { Request, normalize, parseMeta } from "@/helpers";
 
 export const useSampleStore = defineStore("useSampleStore", {
   state: () => ({
     data: new Map(),
-    anchor: new dbTable(),
+    anchor: new Request(),
     timeOuts: new Map(),
   }),
 
@@ -35,10 +35,15 @@ export const useSampleStore = defineStore("useSampleStore", {
       order_by = "id",
       validity = 36000
     ) {
+      for (var k in params) {
+        //return when all data are not ready
+        if (params[k] == null) delete params[k];
+      }
+      console.log(params);
       const offset = page * limit - limit;
       const key = normalize({ ...params, limit, offset, order, order_by });
 
-      const result = await this.anchor.get("tableName", {
+      const result = await this.anchor.get(this.anchor.root + "/endpoint", {
         limit,
         offset,
         order,
@@ -48,7 +53,7 @@ export const useSampleStore = defineStore("useSampleStore", {
 
       let final;
       if (Array.isArray(result.data)) {
-        final = result.data.map(parseMeta);
+        final = Object.values(result.data).map((r) => parseMeta(r));
       } else {
         final = result.data;
       }
@@ -64,9 +69,9 @@ export const useSampleStore = defineStore("useSampleStore", {
   },
 
   getters: {
-    get:
-      (state) =>
-      (
+    get: (state) => {
+      const data = state.data;
+      return (
         params = {},
         page = 1,
         limit = 50,
@@ -77,11 +82,12 @@ export const useSampleStore = defineStore("useSampleStore", {
         const offset = page * limit - limit;
         const key = normalize({ ...params, limit, offset, order, order_by });
 
-        if (state.data.has(key)) {
-          return Promise.resolve(state.data.get(key));
+        if (data.has(key)) {
+          return data.get(key);
         }
 
-        return state.load(params, page, limit, order, order_by, validity);
-      },
+        state.load(params, page, limit, order, order_by, validity);
+      };
+    },
   },
 });
