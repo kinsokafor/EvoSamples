@@ -78,8 +78,12 @@ const {data, pageArray, setPage, setLimit, pageCount, page} = useBigStore(store,
 
 async function getCount()
 {
+    const params = query.value;
+    for (var k in params) {
+        if (params[k] == null) delete params[k]
+    }
     const req = new Request;
-    const res = await req.get(req.root+"/endpoint", {...query.value});
+    const res = await req.get(req.root+"/endpoint", {...params});
     count.value = res.data;
 }
 
