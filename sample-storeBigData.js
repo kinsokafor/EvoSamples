@@ -39,28 +39,32 @@ export const useSampleStore = defineStore("useSampleStore", {
         //return when all data are not ready
         if (params[k] == null) delete params[k];
       }
-      console.log(params);
+
       const offset = page * limit - limit;
       const key = normalize({ ...params, limit, offset, order, order_by });
 
-      const result = await this.anchor.get(this.anchor.root + "/endpoint", {
+      await this.anchor.get(this.anchor.root + "/endpoint", {
         limit,
         offset,
         order,
         order_by,
         ...params,
+      }).then(result => {
+        if(result.status !== 200) return;
+
+        let final;
+        if (Array.isArray(result.data)) {
+          final = Object.values(result.data).map((r) => parseMeta(r));
+        } else {
+          final = result.data;
+        }
+
+        this._setCache(key, final, validity);
+
+        return final;
       });
 
-      let final;
-      if (Array.isArray(result.data)) {
-        final = Object.values(result.data).map((r) => parseMeta(r));
-      } else {
-        final = result.data;
-      }
-
-      this._setCache(key, final, validity);
-
-      return final;
+      
     },
 
     abort() {
