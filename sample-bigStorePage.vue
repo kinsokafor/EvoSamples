@@ -43,6 +43,7 @@
                     :page-array="pageArray"
                     :count="count"
                     :page="page"
+                    :loading="store.loading"
                     @setPage="setPage"
                     @setLimit="setLimit"
                     v-slot="{outputData}">

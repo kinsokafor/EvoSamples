@@ -6,6 +6,7 @@ export const useSampleStore = defineStore("useSampleStore", {
     data: new Map(),
     anchor: new Request(),
     timeOuts: new Map(),
+    loading: false,
   }),
 
   actions: {
@@ -42,6 +43,7 @@ export const useSampleStore = defineStore("useSampleStore", {
 
       const offset = page * limit - limit;
       const key = normalize({ ...params, limit, offset, order, order_by });
+      this.loading = true
 
       await this.anchor.get(this.anchor.root + "/endpoint", {
         limit,
@@ -62,6 +64,8 @@ export const useSampleStore = defineStore("useSampleStore", {
         this._setCache(key, final, validity);
 
         return final;
+      }).finally(() => {
+        this.loading = false
       });
 
       
