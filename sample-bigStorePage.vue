@@ -3,33 +3,19 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class="row">
-                <!-- <div class="col-md-4">
-                    <label for="field1">Label 1</label>
-                    <select class="form-control" id="field1" v-model="query.field1">
-                        <option v-for="field1 in []" :key="field1" :value="field1">
-                            {{ field1 }}
+                <div class="col-md-4">
+                    <label for="field1">Status</label>
+                    <select class="form-control" id="field1" v-model="query.status">
+                        <option v-for="status in statusOptions" :key="status" :value="status">
+                            {{ status }}
                         </option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="field2">Label 2</label>
-                    <select class="form-control" id="field2" v-model="query.field2">
-                        <option v-for="field2 in []" :key="field2" :value="field2">
-                            {{ field2 }}
-                        </option>
-                    </select>
-                </div> -->
-                <div class="col-md-4">
-                    <label for="fullname">Search name</label>
-                    <div class="d-flex name-search-filter input-group">
-                        <input type="text" class="form-control flex-2" id="fullname" placeholder="Search..." v-model="fullname"/>
-                        <div class="input-group-append">
-                            <button 
-                                class="btn btn-primary flex-1" 
-                                @click.prevent="query.fullname = fullname">
-                                Search
-                            </button>
-                        </div>
+                    <label for="fullname">Search</label>
+                    <div class="name-search-filter">
+                        <input type="search" class="form-control flex-2" id="fullname" placeholder="Search..."
+                            v-model="query.search" />
                     </div>
                 </div>
             </div>
@@ -37,65 +23,43 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <Filter 
-                :data="data"
-                :page-array="pageArray"
-                :count="count"
-                :page="page"
-                :loading="store.loading"
-                @setPage="setPage"
-                @setLimit="setLimit"
-                v-slot="{outputData}">
-                {{outputData}}
+            <Filter v-bind="filterProps" :loading="store.loading"
+                @setPage="setPage" @setLimit="setLimit" v-slot="{ outputData }">
+                {{ outputData }}
             </Filter>
         </div>
     </div>
 </template>
 
 <script setup>
-import { useStudentsStore } from '@module/eEdu/store/BigData/students'
+import { useSampleStore } from '@module/sample'
 import { computed, ref, watch, onMounted } from 'vue'
-import { useBigStore, Request } from '@/helpers';
-import Filter from "@filter/BigStoreFilter.vue";
+import { useStore } from '@/helpers';
 
-const store = useStudentsStore()
-const fullname = ref(null)
+const store = useSampleStore()
 
+const statusOptions = ["active", "inactive", "deleted"]
 
 const query = ref({})
 
 const count = ref(0)
 
 onMounted(() => {
-    // query.value.year = schoolStore.getSchoolData.active_year
-    // query.value.cycle = schoolStore.getSchoolData.active_cycle
-    // query.value.school_id = schoolStore.getSchoolData.id
-    setTimeout(() => getCount(), 3000)
-    fullname.value = query.value?.fullname || ""
+    query.value.status = "active"
 })
 
 const config = computed(() => ({
-    query: query.value,
-    count: count.value
+    query: { 
+        order_by: "surname,middle_name,other_names",
+        searchin: "surname,middle_name,other_names,email,username", 
+        ...query.value 
+    },
+    orderBy: "surname,middle_name,other_names",
+    order: "desc"
 }))
 
-watch(query, () => getCount(), {deep: true})
-
-const {data, pageArray, setPage, setLimit, getSerialNumber, page} = useBigStore(store, config)
-
-async function getCount()
-{
-    const params = query.value;
-    for (var k in params) {
-        if (params[k] == null) delete params[k]
-    }
-    const req = new Request;
-    const res = await req.get(req.root+"/endpoint", {...params});
-    count.value = res.data;
-}
+const { Filter, setPage, setLimit, filterProps, updateInCache, getSerialNumber } = useStore(store, config)
 
 </script>
 
-<style lang="scss" scoped>
-    
-</style>
+<style lang="scss" scoped></style>
